@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -15,33 +18,31 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class Game extends Activity {
 	public static final String TAG = "JottoGame";
 	public static String lastGuess = "";
 	private ArrayList<String> guesses = new ArrayList<String>();;
 	private String answer = "";
+	private int[] abc = new int[26];
+	private DatabaseHandler db;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-		//createAZDialog();
-		//loadData("EN_FiveLetterWordsList.txt");
 		loadData();
-		/*
-		ArrayList<String> results = db.getAllWords();
-		for(int i=0;i<results.size();i++)
-		{
-			Log.i(TAG, results.get(i));
-		}
-		*/
-		//newGameListener();
-		//addGuessListener();
-		//newGame();
+		newGameListener();
+		addGuessListener();
+		newGame();
+		createAZDialog();
 	}
 	
 	private void loadData() {
-		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+		db = new DatabaseHandler(getApplicationContext());
 		try{
 			db.createDataBase();
 		}catch (IOException e){
@@ -52,6 +53,7 @@ public class Game extends Activity {
 		}catch (SQLException e){
 			throw e;
 		}
+		Log.v(TAG,"Database Handler setup");
 	}
 
 	private void addGuessListener() {
@@ -64,15 +66,36 @@ public class Game extends Activity {
 				String input = et01.getText().toString();
 				//make sure it is a meaningful and valid guess
 				if (input != null && !input.isEmpty() && input.length() == 5){
-					lastGuess = input;
+					//Log.i(TAG, "Check if valid guess");
+					if(db.isValidGuess(input))
+					{
+						guesses.add(input);
+						//Log.i(TAG, guesses.get(guesses.size()-1));
+						TextView guessList = (TextView) findViewById(R.id.GuessList);
+						String temp = guessList.getText().toString();
+						guessList.setText(input+": "+inCommon(answer, input).length()+"\n"+temp);
+					}else{
+						//Log.i(TAG, "NOT a valid guess");
+						Toast.makeText(getApplicationContext(), input+" is not a valid guess", Toast.LENGTH_SHORT).show();
+					}
 				}
+			}
+
+			private String inCommon(String wordA, String wordB) {
+				String common = "";
+				for(int i=0;i<wordA.length();i++){  
+				    for(int j=0;j<wordB.length();j++){  
+				        if(wordA.charAt(i)==wordB.charAt(j)){  
+				            common += wordA.charAt(i);  
+				            break;
+				        }  
+				    }  
+				} 
+				return common;
 			}
 			
 		});
-		this.guesses.add(lastGuess);
-		
 	}
-	/*
 	private void newGameListener(){
 		Button btnNG = (Button) findViewById(R.id.Giveup);
 		btnNG.setOnClickListener(new OnClickListener(){
@@ -84,22 +107,17 @@ public class Game extends Activity {
 	}
 	
 	private void newGame() {
-		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-		int limit = db.getNumberOfWords();
-		int randomNum = (int)(Math.random()*limit); 
-		answer = db.getWordAtIndex(randomNum);
+		answer = db.getRandomWord();
 		guesses = new ArrayList<String>();
+		Log.v(TAG, answer);
+		TextView guessList = (TextView) findViewById(R.id.GuessList);
+		guessList.setText("");
 	}
-
-	public void loadData(String inFile) {
-		Log.i(TAG,"STARTING TO LOAD DATA");
-		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-		db.loadTextFile(inFile,this);	
-		//db.loadTextFile2(inFile,this);	
-		db.close();
-		Log.i(TAG,"DONE LOADING DATA");
+	
+	private void recolorLetter(int index) {
+		TextView tv = (TextView) findViewById(R.id.GuessList);
 	}
-
+	
 	private void createAZDialog(){
 		Button az = (Button) findViewById(R.id.AZ);
 		az.setOnClickListener(new OnClickListener(){
@@ -116,8 +134,15 @@ public class Game extends Activity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int index) {
-						//TODO change letters colors
-						
+						if(abc[index] < 1){
+							abc[index] = 1;
+						}else if(abc[index] > 1){
+							abc[index] = 0;
+						}else{
+							abc[index] = 2;
+						}
+						Log.i(TAG,index+":"+abc[index]);
+						recolorLetter(index);
 					}
 				});
 				AlertDialog alert = builder.create();
@@ -127,5 +152,5 @@ public class Game extends Activity {
 			
 		});
 	}
-	*/
+
 }

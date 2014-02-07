@@ -24,8 +24,17 @@ public class DatabaseHandler  extends SQLiteOpenHelper{
 	private static int DB_VERSION = 1;
 	private static String DB_NAME = "jottogame";
 	private static String DB_PATH = "";
+	// Labels table name
+	private static final String TABLE_WORDS = "words";
+	// labels column names
+	private static final String KEY_ID = "id";
+	private static final String KEY_VALUE = "value";
+	
+	private static final int MAX_WORDS = 5757;
+	
 	private SQLiteDatabase myDataBase;
 	private final Context myContext;
+	
 	
 	public DatabaseHandler(Context context){
 		super(context, DB_NAME, null, DB_VERSION);
@@ -52,6 +61,8 @@ public class DatabaseHandler  extends SQLiteOpenHelper{
 			}catch(IOException e){
 				throw new Error("Error Copying Database");
 			}
+		}else{
+			Log.e(TAG, "Database already exists");
 		}
 	}
 	
@@ -102,5 +113,55 @@ public class DatabaseHandler  extends SQLiteOpenHelper{
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public boolean isValidGuess(String input)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		String query = "SELECT count(*) FROM "+TABLE_WORDS+" WHERE value = '"+input+"\'";
+		Cursor cursor = db.rawQuery(query, null);
+		cursor.moveToFirst();
+		if(cursor.getInt(0) > 0)
+			return true;
+		return false;
+	}
+	
+	public String getWord(int x)
+	{
+		String result = "Jotto";
+		String query = "SELECT * FROM "+TABLE_WORDS+" WHERE id ="+x;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(query, null);
+		if(cursor.moveToFirst()){
+			result = cursor.getString(1);
+		}
+		cursor.close();
+		db.close();
+		return result;
+	}
+	
+	public String getRandomWord(){
+		int rand = (int) (Math.random()*MAX_WORDS);
+		return getWord(rand);
+	}
+	
+	public ArrayList<String> getAllWords(){
+		ArrayList<String> words = new ArrayList<String>();
+		String selectQuery = "SELECT * FROM "+TABLE_WORDS;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		
+		//looping through all rows and adding it to list
+		if(cursor.moveToFirst()){
+			do{
+				words.add(cursor.getString(1));
+			} while (cursor.moveToNext());
+		}
+		//close connections
+		cursor.close();
+		db.close();
+		
+		//return words
+		return words;
 	}
 }

@@ -35,6 +35,14 @@
             android:layout_width="0.0dip" android:layout_height="fill_parent" 
             android:text="Guess" 
             android:layout_weight="1.0" /> 
-    </LinearLayout> 
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/GuessList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Guesslayout"
+        android:layout_centerHorizontal="true"
+        android:ems="10" />
+ 	    
 </RelativeLayout> 

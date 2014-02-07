@@ -28,8 +28,9 @@ public final class R {
         public static final int EditText01=0x7f080000;
         public static final int Giveup=0x7f080002;
         public static final int Guess=0x7f080004;
+        public static final int GuessList=0x7f080005;
         public static final int Guesslayout=0x7f080001;
-        public static final int action_settings=0x7f080005;
+        public static final int action_settings=0x7f080006;
     }
     public static final class layout {
         public static final int activity_game=0x7f030000;
