@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="fill_parent" android:layout_height="wrap_content" 
+    android:layout_centerHorizontal="true"> 
+
+    <EditText
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:id="@+id/EditText01" /> 
+
+    <LinearLayout 
+        android:id="@+id/Guesslayout"
+        android:orientation="horizontal" 
+        android:paddingLeft="4.0dip" 
+        android:paddingTop="5.0dip" 
+        android:paddingRight="4.0dip" 
+        android:paddingBottom="1.0dip" 
+        android:layout_width="fill_parent" android:layout_height="wrap_content" 
+        android:layout_below="@+id/EditText01"> 
+
+        <Button 
+            android:id="@+id/Giveup" 
+            android:layout_width="0.0dip" android:layout_height="fill_parent" 
+            android:text="Give Up" 
+            android:layout_weight="1.0" /> 
+
+        <Button 
+            android:id="@+id/AZ" 
+            android:layout_width="0.0dip" android:layout_height="fill_parent" 
+            android:text="A-Z" 
+            android:layout_weight="1.0" /> 
+        <Button 
+            android:id="@+id/Guess" 
+            android:layout_width="0.0dip" android:layout_height="fill_parent" 
+            android:text="Guess" 
+            android:layout_weight="1.0" /> 
+    </LinearLayout> 
+
+</RelativeLayout> 
