@@ -13,6 +13,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.SQLException;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.SpannedString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,6 +48,7 @@ public class Game extends Activity {
 		addGuessListener();
 		newGame();
 		createAZDialog();
+		for(int i=0;i<abc.length;i++){	abc[i] = 2; }
 	}
 	
 	private void loadData() {
@@ -73,7 +83,7 @@ public class Game extends Activity {
 						//Log.i(TAG, guesses.get(guesses.size()-1));
 						TextView guessList = (TextView) findViewById(R.id.GuessList);
 						String temp = guessList.getText().toString();
-						guessList.setText(input+": "+inCommon(answer, input).length()+"\n"+temp);
+						guessList.setText(input+": ("+inCommon(answer, input).length()+") \n"+temp);
 					}else{
 						//Log.i(TAG, "NOT a valid guess");
 						Toast.makeText(getApplicationContext(), input+" is not a valid guess", Toast.LENGTH_SHORT).show();
@@ -115,7 +125,29 @@ public class Game extends Activity {
 	}
 	
 	private void recolorLetter(int index) {
-		TextView tv = (TextView) findViewById(R.id.GuessList);
+		TextView guessList = (TextView) findViewById(R.id.GuessList);
+		String temp = guessList.getText().toString();
+		
+		SpannableStringBuilder str = new SpannableStringBuilder(temp);
+		for(int j=0;j<abc.length;j++)
+		{
+			int fcs;
+			char c = (char)((int)('a') + j);
+			if(abc[j] > 1){
+				fcs = Color.rgb(0, 0, 0);
+			}else if(abc[j] < 1){
+				fcs = Color.rgb(0, 255, 0);
+			}else{
+				fcs = Color.rgb(255, 0, 0);
+			}
+			for(int i=0;i<temp.length();i++)
+			{
+				if(temp.charAt(i) == c){
+					str.setSpan(new ForegroundColorSpan(fcs), i, i+1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+				}
+			}
+		}
+		guessList.setText(str);
 	}
 	
 	private void createAZDialog(){
